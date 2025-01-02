@@ -1,5 +1,5 @@
 import psycopg2  # type: ignore
-from config import Config
+from utils.config import Config
 
 
 def get_main_connection():
