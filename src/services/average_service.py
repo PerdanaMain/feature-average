@@ -8,4 +8,7 @@ def find_average_value(indicates: list) -> float:
     Returns:
     float: The average value of the list.
     """
-    return sum(indicates) / len(indicates)
+
+    average = sum(indicates) / len(indicates)
+    # average += 5
+    return average
