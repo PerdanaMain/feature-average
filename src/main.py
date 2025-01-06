@@ -75,12 +75,15 @@ def calculate(part):
     max_average = find_average_value(signal_values[max_indices])
     min_average = find_average_value(signal_values[min_indices])
 
+    upper_threshold = float(max_average + 5)
+    lower_threshold = float(min_average - 5)
+
     detail = get_detail(part[0])
 
     if detail:
-        update_detail(part[0], float(max_average + 5), float(min_average - 5))
+        update_detail(part[0], upper_threshold, lower_threshold, lower_threshold)
     else:
-        create_detail(part[0], float(max_average + 5), float(min_average - 5))
+        create_detail(part[0], upper_threshold, lower_threshold, lower_threshold)
 
 
 def main():
