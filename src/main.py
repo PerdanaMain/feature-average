@@ -48,6 +48,18 @@ def plot_signals_with_envelopes(df, part_name, signal_values, min_indices, max_i
     plt.savefig("./public/result/signal_envelopes.png")
 
 
+def one_percent_condition_calculate(part):
+    data = get_features_value(part_id=part[0])
+    df = pd.DataFrame(data, columns=["id", "value", "datetime", "part_id"])
+    signal_values = df["value"].values
+
+    # find average value
+    average_value = find_average_value(signal_values)
+    logger.info(f"Average value for part {part[1]}: {average_value}")
+
+    return average_value
+
+
 def calculate(part):
     data = get_features_value(part_id=part[0])
 
@@ -75,6 +87,8 @@ def calculate(part):
     max_average = find_average_value(signal_values[max_indices])
     min_average = find_average_value(signal_values[min_indices])
 
+    one_percent_condition = float(one_percent_condition_calculate(part))
+
     if max_average <= 0 or min_average <= 0:
         # interpolate this, cause the average can't be < 0
         min_average = 10
@@ -88,9 +102,9 @@ def calculate(part):
     detail = get_detail(part[0])
 
     if detail:
-        update_detail(part[0], upper_threshold, lower_threshold, lower_threshold)
+        update_detail(part[0], upper_threshold, lower_threshold, one_percent_condition)
     else:
-        create_detail(part[0], upper_threshold, lower_threshold, lower_threshold)
+        create_detail(part[0], upper_threshold, lower_threshold, one_percent_condition)
 
 
 def main():
