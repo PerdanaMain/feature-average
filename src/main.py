@@ -74,9 +74,10 @@ def calculate(part):
     # Calculate average value
     max_average = find_average_value(signal_values[max_indices])
     min_average = find_average_value(signal_values[min_indices])
+    range = (max_average - min_average) + 20
 
-    upper_threshold = float(max_average + 5)
-    lower_threshold = float(min_average - 5)
+    lower_threshold = float(max_average + 15)
+    upper_threshold = float(max_average + range + 10)
 
     detail = get_detail(part[0])
 
