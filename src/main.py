@@ -60,7 +60,7 @@ def one_percent_condition_calculate(part):
     return average_value
 
 
-def calculate(part):
+def calculate_detail(part):
     data = get_features_value(part_id=part[0])
 
     # Convert to DataFrame if not already
@@ -99,12 +99,45 @@ def calculate(part):
     lower_threshold = float(max_average + 15)
     upper_threshold = float(max_average + range + 10)
 
+    return upper_threshold, lower_threshold, one_percent_condition
+
+    # detail = get_detail(part[0])
+
+    # if detail:
+    #     update_detail(part[0], upper_threshold, lower_threshold, one_percent_condition)
+    # else:
+    #     create_detail(part[0], upper_threshold, lower_threshold, one_percent_condition)
+
+
+def calculate(part):
     detail = get_detail(part[0])
 
     if detail:
-        update_detail(part[0], upper_threshold, lower_threshold, one_percent_condition)
+        upper_threshold = detail[2]
+
+        upper_threshold, lower_threshold, one_percent_condition = calculate_detail(part)
+
+        if upper_threshold == None:
+            update_detail(
+                part_id=part[0],
+                upper_threshold=upper_threshold,
+                lower_threshold=lower_threshold,
+                one_hundred_percent_condition=one_percent_condition,
+            )
+        else:
+            # just need one_percent_condition
+            update_one_percent_condition(
+                part_id=part[0],
+                one_hundred_percent_condition=one_percent_condition,
+            )
     else:
-        create_detail(part[0], upper_threshold, lower_threshold, one_percent_condition)
+        upper_threshold, lower_threshold, one_percent_condition = calculate_detail(part)
+        create_detail(
+            part_id=part[0],
+            upper_threshold=upper_threshold,
+            lower_threshold=lower_threshold,
+            one_hundred_percent_condition=one_percent_condition,
+        )
 
 
 def main():

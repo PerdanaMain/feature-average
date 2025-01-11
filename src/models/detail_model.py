@@ -80,3 +80,19 @@ def update_detail(
     finally:
         if conn:
             conn.close()
+
+
+def update_one_percent_condition(part_id, one_percent_condition):
+    try:
+        conn = get_main_connection()
+        cur = conn.cursor()
+
+        query = "UPDATE pf_details SET one_hundred_percent_condition = %s WHERE part_id = %s"
+        cur.execute(query, (one_percent_condition, part_id))
+        conn.commit()
+    except Exception as e:
+        print(f"An exception occurred: {e}")
+        logger.error(f"An exception occurred: {e}")
+    finally:
+        if conn:
+            conn.close()
