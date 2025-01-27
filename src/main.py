@@ -62,6 +62,10 @@ def one_percent_condition_calculate(part):
 
 def calculate_detail(part):
     data = get_features_value(part_id=part[0])
+    
+    if len(data) == 0:
+        logger.info(f"No data for part {part[1]}")
+        return None, None, None
 
     # Convert to DataFrame if not already
     df = pd.DataFrame(data, columns=["id", "value", "datetime", "part_id"])
@@ -111,25 +115,27 @@ def calculate_detail(part):
 
 def calculate(part):
     detail = get_detail(part[0])
-
+    
     if detail:
-        upper_threshold = detail[2]
+        upper = detail[2]
 
         upper_threshold, lower_threshold, one_percent_condition = calculate_detail(part)
 
-        if upper_threshold == None:
+        if upper == None:
             update_detail(
                 part_id=part[0],
                 upper_threshold=upper_threshold,
                 lower_threshold=lower_threshold,
                 one_hundred_percent_condition=one_percent_condition,
             )
+            # print("One Percent Condition: ", one_percent_condition)
         else:
             # just need one_percent_condition
             update_one_percent_condition(
                 part_id=part[0],
-                one_hundred_percent_condition=one_percent_condition,
+                one_percent_condition=one_percent_condition,
             )
+            # print("One Percent Condition:", one_percent_condition)
     else:
         upper_threshold, lower_threshold, one_percent_condition = calculate_detail(part)
         create_detail(
@@ -138,17 +144,27 @@ def calculate(part):
             lower_threshold=lower_threshold,
             one_hundred_percent_condition=one_percent_condition,
         )
+        # print("tidak ada detail masuk sini:")
+        # print(upper_threshold, lower_threshold, one_percent_condition)
+
+    return detail
 
 
 def main():
     logger.info("Start calculating signal envelopes and average values")
     parts = get_parts()
+    countExits = 0
+    countNotExists = 0
 
     try:
         for part in parts:
+           try:
             calculate(part)
             logger.info(f"Part {part[1]} done")
-
+           except Exception as e:
+            logger.error(f"An exception occurred: {e}") 
+            continue
+        
         logger.info("All parts done")
     except Exception as e:
         logger.error("An exception occurred: ", e)
